@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        <!--namespace:命名空间，接口名+包名-->
+<mapper namespace="com.dxf.mapper.TypeMapper">
+    <select id="getAll" resultType="com.dxf.beans.Type">
+        select * from t_website_type
+    </select>
+    <update id="increment">
+        update t_website_type set website_num = website_num + 1 where id = #{id}
+    </update>
+
+    <update id="decrement">
+        update t_website_type set website_num = website_num - 1 where id = #{id}
+    </update>
+</mapper>

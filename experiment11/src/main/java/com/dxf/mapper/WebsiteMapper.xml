@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        <!--namespace:命名空间，接口名+包名-->
+<mapper namespace="com.dxf.mapper.WebsiteMapper">
+    <resultMap id="websiteMap" type="com.dxf.beans.Website">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="url" column="url"></result>
+        <result property="type_id" column="type_id"></result>
+        <result property="access_num" column="access_num"></result>
+        <result property="last_access_date" column="last_access_date"></result>
+        <result property="create_date" column="create_date"></result>
+        <result property="create_user_id" column="create_user_id"></result>
+        <association property="type" javaType="com.dxf.beans.Type">
+            <id property="id" column="tId"></id>
+            <result property="name" column="tName"></result>
+            <result property="website_num" column="tWebsite_num"></result>
+        </association>
+        <association property="user" javaType="com.dxf.beans.User">
+            <id property="id" column="uId"></id>
+            <result property="name" column="uName"></result>
+            <result property="website_num" column="uWebsite_num"></result>
+            <result property="website_access_num" column="website_access_num"></result>
+        </association>
+    </resultMap>
+
+    <select id="getAll" resultMap="websiteMap">
+        select
+            w.id as id,
+            w.name as `name`,
+            w.url  as url,
+            w.type_id as type_id,
+            w.access_num as access_num,
+            w.last_access_date as last_access_date,
+            w.create_date as create_date,
+            w.create_user_id as create_user_id,
+            t.id as tId,
+            t.`name` as tName,
+            t.website_num as tWebsite_num,
+            u.id as uId,
+            u.name as uName,
+            u.website_access_num as website_access_num,
+            u.website_num as uWebsite_num
+        from t_website as w,t_website_type as t,t_user as u
+        where w.type_id = t.id and w.create_user_id = u.id order by access_num desc limit #{start},#{count};
+    </select>
+
+    <select id="getCount" resultType="int" >
+        select count(*) from t_website;
+    </select>
+
+    <update id="increment">
+        update t_website set access_num = access_num + 1,last_access_date=#{date} where id = #{id}
+    </update>
+
+    <insert id="save">
+        insert into t_website(
+            name,
+            url,
+            type_id,
+            access_num,
+            create_date,
+            create_user_id) values (
+                                      #{name},
+                                      #{url},
+                                      #{type_id},
+                                      #{access_num},
+                                      #{create_date},
+                                      #{create_user_id}
+                                      )
+    </insert>
+
+    <delete id="delete" >
+        delete from t_website where id in
+        <foreach collection="array" item="id" open="(" close=")" separator="," >
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getByIds" resultType="com.dxf.beans.Website">
+        select * from t_website where id in
+        <foreach collection="array" item="id" open="(" close=")" separator="," >
+            #{id}
+        </foreach>
+    </select>
+</mapper>
